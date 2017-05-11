@@ -1,27 +1,36 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature;
 
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\BrowserKitTestCase;
 
-class PostsTest extends TestCase
+class PDFTest extends BrowserKitTestCase
 {
     /**
-     * A basic test example.
-     *
-     * @return void
+     * @test
      */
-    public function testExample()
+    public function it_streams_pdf_when_given_post_object()
     {
-        $this->assertTrue(true);
+        /** * * * *
+         * SETUP  *
+         * * * * **/
+
+        /** * * *
+         * ACT  *
+         * * * **/
+
+        /** * * *
+         * TEST *
+         * * * **/
+
     }
 
     /**
      * @test
      */
-    public function it_creates_post_with_html_content()
+    public function it_streams_pdf_when_given_post_id()
     {
         /** * * * *
          * SETUP  *
@@ -41,7 +50,7 @@ class PostsTest extends TestCase
     /**
      * @test
      */
-    public function it_does_not_create_post_missing_user_id()
+    public function it_streams_pdf_when_given_html()
     {
         /** * * * *
          * SETUP  *

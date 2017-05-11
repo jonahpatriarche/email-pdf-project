@@ -3,7 +3,6 @@
 @section('content')
     <div class="box">
         @foreach($posts as $post)
-
             <article class="media">
                 <div class="media-content">
                     <div class="content">

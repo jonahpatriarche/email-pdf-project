@@ -5,8 +5,8 @@
             Email PDF
         </header>
         <section class="modal-card-body">
-            {{ Form::open(['route' => 'email.post-pdf']) }}
-            {{ Form::hidden('post-url', request()->path()) }}
+            {{ Form::open(['route' => 'posts.email']) }}
+            {{ Form::hidden('url', request()->path()) }}
             {{ Form::email('email') }}
 
         </section>

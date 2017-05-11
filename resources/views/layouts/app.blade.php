@@ -15,7 +15,9 @@
         <link href="{{ asset('css/wp.css') }}" rel="stylesheet">
     </head>
     <body>
-        <div class="container">
+        <div class="container" style="padding:50px">
+            @include('partials._success')
+            @include('partials._errors')
             <div class="content">
                 @yield('content')
             </div>

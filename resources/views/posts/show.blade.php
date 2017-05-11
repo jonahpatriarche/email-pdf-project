@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+
     <div class="title" style="padding-top: 25px">
         {{ $post->title }}
     </div>
@@ -13,7 +14,7 @@
     </div>
 
     <div class="box">
-        {{ Form::open(['route' => 'email.post']) }}
+        {{ Form::open(['route' => 'posts.email']) }}
 
         {{ Form::hidden('post_id', $post->id) }}
 

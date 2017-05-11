@@ -12,9 +12,7 @@
 */
 
 use App\Post;
-use Barryvdh\DomPDF\PDF;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 Route::get('/', function () {
 
@@ -35,8 +33,7 @@ Route::get('posts/{post}', function (Request $request, Post $post) {
 
 })->name('posts.show');
 
-Route::post('email/post', 'EmailsController@postPdf')->name('email.post');
-
+Route::post('posts/email', 'PostsController@email')->name('posts.email');
 
 Route::get('posts/{post}/pdf', 'PostsController@pdf')->name('posts.pdf');
 /*Route::get('posts', 'PostsController@index')->name('posts.index');

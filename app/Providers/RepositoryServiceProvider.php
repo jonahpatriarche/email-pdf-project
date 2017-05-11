@@ -16,7 +16,7 @@ class RepositoryServiceProvider extends ServiceProvider
     {
         $this->app->bind(
             'App\\Repositories\\PDFRepositoryInterface',
-            'App\\Repositories\\DomPdfRepository'
+            'App\\Repositories\\SnappyPdfRepository'
         );
     }
 }

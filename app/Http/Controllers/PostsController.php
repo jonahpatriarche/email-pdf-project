@@ -2,56 +2,107 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\BlogPostLinkPDF;
 use App\Post;
-use Barryvdh\DomPDF\PDF;
-use GuzzleHttp\Client;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
+use App\Repositories\PDFRepositoryInterface;
+use Illuminate\Support\Facades\Mail;
 
 class PostsController extends Controller
 {
 
-    public function index(Request $request)
+    /**
+     * Repository interface, bound in RepositoryServiceProvider
+     *
+     * @var \App\Repositories\PDFRepositoryInterface
+     * @see \App\Providers\RepositoryServiceProvider
+     */
+    private $pdf;
+
+    /**
+     * PostsController constructor.
+     *
+     * @param \App\Repositories\PDFRepositoryInterface $pdf
+     */
+    public function __construct(PDFRepositoryInterface $pdf)
+    {
+        $this->pdf = $pdf;
+    }
+
+    /**
+     * Send email with link to pdf of requested post_id
+     */
+    public function email()
+    {
+        try {
+            if(request('post_id')) {
+                $url = route('posts.pdf', request('post_id'));
+            }
+            else {
+                $url = request('url');
+            }
+
+            Mail::to(request('email'))
+                ->send(new BlogPostLinkPDF($url));
+
+            return back();
+        }
+        catch(\Exception $e) {
+
+            $this->logError($e);
+
+            return back()
+                ->withErrors('Email could not be sent.');
+        }
+    }
+
+    /**
+     * Return all posts
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\View\View
+     */
+    public function index()
     {
         return view('posts.index')
             ->with('posts', Post::all());
     }
 
-    public function show(Request $request, Post $post)
+    /**
+     * Fetch the specified post
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Post                $post
+     *
+     * @return \Illuminate\View\View
+     */
+    public function show(Post $post)
     {
         return view('posts.show')
             ->with('post', $post);
     }
 
-    public function pdf(Request $request, Post $post) {
+    /**
+     * Generate a PDF file for given POST or log error and redirect to post index
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Post                $post
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function pdf(Post $post) {
         try {
-            $client = new Client();
-            $res = $client->request('GET', 'https://api.printfriendly.com/v1/pdfs/create', [
-                'form_params' => [
-                    'page_url' => route($request->post_url)
-                ]
-            ]);
-
-            echo $res->getStatusCode();
-
-            echo $res->getHeader('content-type');
-
-            echo $res->getBody();
-
-            /*$pdf = App::make('dompdf.wrapper');
-            $pdf->loadHTML($post->content);
-
-            # Display pdf in browser
-            return $pdf->stream();*/
-
-            # Alternatively, we can download the file:
-            // return $pdf->download('blog_' . $post['id'] . '.pdf');
+            $success = $this->pdf->download($post);
+            session()->flash('success', 'PDF Created');
+            if($success) {
+                return redirect(route('posts.index'));
+            }
         }
-            /* If something goes wrong, write to log and redirect to posts index */
         catch(\Exception $e) {
             $this->logError($e);
 
-            return redirect(route('posts.index'));
+            return back()
+                ->withErrors('Could not process PDF');
         }
     }
 }
